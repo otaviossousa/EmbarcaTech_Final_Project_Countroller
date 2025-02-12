@@ -1,0 +1,31 @@
+.program ws2818b
+.side_set 1
+.wrap_target
+    out x, 1        side 0 [2]
+    jmp !x, 3       side 1 [1]
+    jmp 0           side 1 [4]
+    nop             side 0 [4]
+.wrap 
+
+
+% c-sdk {
+#include "hardware/clocks.h"
+
+void ws2818b_program_init(PIO pio, uint sm, uint offset, uint pin, float freq) {
+
+  pio_gpio_init(pio, pin);
+  
+  pio_sm_set_consecutive_pindirs(pio, sm, pin, 1, true);
+  
+  // Program configuration.
+  pio_sm_config c = ws2818b_program_get_default_config(offset);
+  sm_config_set_sideset_pins(&c, pin); // Uses sideset pins.
+  sm_config_set_out_shift(&c, true, true, 8); // 8 bit transfers, right-shift.
+  sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_TX); // Use only TX FIFO.
+  float prescaler = clock_get_hz(clk_sys) / (10.f * freq); // 10 cycles per transmission, freq is frequency of encoded bits.
+  sm_config_set_clkdiv(&c, prescaler);
+  
+  pio_sm_init(pio, sm, offset, &c);
+  pio_sm_set_enabled(pio, sm, true);
+}
+%}
