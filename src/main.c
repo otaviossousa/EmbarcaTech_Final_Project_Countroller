@@ -11,7 +11,7 @@
 #include "hardware/i2c.h"
 #include "hardware/adc.h"
 
-// ================= Definições de Pinagem =================
+// ================= Pin Definitions =================
 #define LED_BLUE 12
 #define LED_RED  13
 #define LED_GREEN 11
@@ -22,7 +22,7 @@
 #define BUZZER_PIN_2 10
 #define BUZZER_FREQUENCY 10000
 
-// ================= Definições para o Display OLED =================
+// ================= Definitions for OLED Display =================
 const uint I2C_SDA_PIN = 14;
 const uint I2C_SCL_PIN = 15;
 uint8_t buf[SSD1306_BUF_LEN];
@@ -33,7 +33,7 @@ struct render_area frame_area = {
     .end_page = SSD1306_NUM_PAGES - 1
 };
 
-// ================= Definições para NeoPixel =================
+// ================= Definitions for NeoPixel =================
 #define LED_COUNT 25
 #define LED_PIN 7
 #define MAX_BRIGHTNESS 255
@@ -49,11 +49,11 @@ npLED_t leds[LED_COUNT];
 PIO np_pio;
 uint sm;
 
-// ================= Variáveis Globais =================
+// ================= Global Variables =================
 uint32_t button_a_count = 0;
 uint32_t button_b_count = 0;
 
-// ================= Funções  =================
+// ================= Functions  =================
 void pwm_init_buzzer(uint pin);
 void beep(uint pin, uint duration_ms);
 void initDisplay(void);
@@ -71,23 +71,23 @@ void npTurnOffAll(void);
 void processButtonAction(uint button, uint buzzer_pin, uint led_pin, uint32_t *counter, const char *btnName);
 void joystickButtonAction(uint button, uint buzzer_pin_1, uint buzzer_pin_2, uint led_pin, uint32_t *counter_a, uint32_t *counter_b, const char *btnName);
 
-// ================= Função Principal =================
+// ================= Main  =================
 int main() {
     stdio_init_all();
     sleep_ms(5000);
-    printf("Iniciando o sistema...\n");
+    printf("Starting system...\n");
   
-    // Inicializa ADC para o joystick
+    // Initialize OLED Display
     adc_init();
     adc_gpio_init(26);
     adc_gpio_init(27);
   
-    // Inicializa NeoPixel
+    // Initialize NeoPixel Matrix
     npInit(LED_PIN);
     npClear();
     setBrightness(128);
   
-    // Inicializa os LEDs da placa
+    // Initialize LEDs
     gpio_init(LED_BLUE);
     gpio_set_dir(LED_BLUE, GPIO_OUT);
     gpio_put(LED_BLUE, false);
@@ -98,7 +98,7 @@ int main() {
     gpio_set_dir(LED_GREEN, GPIO_OUT);
     gpio_put(LED_GREEN, false);
   
-    // Configura os GPIOs dos botões A e B
+    // Initialize buttons
     gpio_init(BUTTON_A);
     gpio_set_dir(BUTTON_A, GPIO_IN);
     gpio_pull_up(BUTTON_A);
@@ -107,34 +107,34 @@ int main() {
     gpio_pull_up(BUTTON_B);
     
   
-    // Configura o GPIO do botão do joystick (GPIO22)
+    // Initialize joystick / button
     gpio_init(BUTTON_JOYSTICK);
     gpio_set_dir(BUTTON_JOYSTICK, GPIO_IN);
     gpio_pull_up(BUTTON_JOYSTICK);
   
-    // Configura os GPIOs dos buzzers
+    // Initialize buzzers
     gpio_init(BUZZER_PIN);
     gpio_set_dir(BUZZER_PIN, GPIO_OUT);
     gpio_init(BUZZER_PIN_2);
     gpio_set_dir(BUZZER_PIN_2, GPIO_OUT);
-  
-    // Inicializa o PWM para ambos os buzzers
+
+    // Initialize PWM for buzzers
     pwm_init_buzzer(BUZZER_PIN);
     pwm_init_buzzer(BUZZER_PIN_2);
   
-    // Inicializa o display OLED
+    // Initialize I2C for OLED Display
     initDisplay();
-    displayMessage("   Iniciando");
+    displayMessage("   Starting");
     displayPatterns();
     npTurnOffAll();
   
-    // Variáveis para controle de antirrebote
+    // Variables for button state tracking
     bool prev_button_a = false;
     bool prev_button_b = false;
     bool prev_button_joystick = false;
   
     while (true) {
-      // Leitura do joystick
+      // Joystick reading
       adc_select_input(0);
       uint adc_y_raw = adc_read();
       adc_select_input(1);
@@ -148,7 +148,7 @@ int main() {
       npSetLED(pos, 255, 0, 0);
       npWrite();
   
-      // Leitura dos botões
+      // Buttons reading
       bool current_button_a = !gpio_get(BUTTON_A);
       bool current_button_b = !gpio_get(BUTTON_B);
   
@@ -161,7 +161,7 @@ int main() {
           sleep_ms(1000);
       }
   
-      // Leitura do botão do joystick (GPIO22)
+      // Joystick button reading
       bool current_button_joystick = !gpio_get(BUTTON_JOYSTICK);
       if (current_button_joystick && !prev_button_joystick) {
           joystickButtonAction(BUTTON_JOYSTICK, BUZZER_PIN, BUZZER_PIN_2, LED_GREEN, &button_a_count, &button_b_count, "");
@@ -176,9 +176,10 @@ int main() {
     return 0;
   }
 
-// ================= Funções para Buzzer =================
+// ================= Buzzer Functions =================
 void pwm_init_buzzer(uint pin) {
-    printf("Inicializando PWM para buzzer no pino %d\n", pin);
+    // em ingles
+    printf("Initializing PWM for buzzer on pin %d\n", pin);
     gpio_set_function(pin, GPIO_FUNC_PWM);
     uint slice_num = pwm_gpio_to_slice_num(pin);
     pwm_config config = pwm_get_default_config();
@@ -188,7 +189,7 @@ void pwm_init_buzzer(uint pin) {
 }
 
 void beep(uint pin, uint duration_ms) {
-    printf("Executando beep no pino %d por %d ms\n", pin, duration_ms);
+    printf("Executing beep on pin %d for %d ms\n", pin, duration_ms);
     uint slice_num = pwm_gpio_to_slice_num(pin);
     pwm_set_gpio_level(pin, 2048);
     sleep_ms(duration_ms);
@@ -196,9 +197,9 @@ void beep(uint pin, uint duration_ms) {
     sleep_ms(100);
 }
 
-// ================= Funções para Display OLED =================
+// ================= OLED Display Functions  =================
 void initDisplay() {
-    printf("Inicializando display OLED via I2C\n");
+    printf("Initializing OLED display via I2C\n");
     i2c_init(i2c1, SSD1306_I2C_CLK * 1000);
     gpio_set_function(I2C_SDA_PIN, GPIO_FUNC_I2C);
     gpio_set_function(I2C_SCL_PIN, GPIO_FUNC_I2C);
@@ -217,13 +218,13 @@ void displayMessage(const char *msg) {
 
 void   displayJoystickInfo(int pos) {
     char msg[32];
-    snprintf(msg, sizeof(msg),"posicao led %d",pos);
+    snprintf(msg, sizeof(msg),"led position %d",pos);
     displayMessage(msg);
 }
 
-// ================= Funções para NeoPixel =================
+// ================= NeoPixel Matrix Functions =================
 void npInit(uint pin) {
-    printf("Inicializando NeoPixel na PIO com pino %d\n", pin);
+    printf("Initializing NeoPixel on PIO with pin %d\n", pin);
     uint offset = pio_add_program(pio0, &ws2818b_program);
     np_pio = pio0;
     sm = pio_claim_unused_sm(np_pio, false);
@@ -244,7 +245,7 @@ void setBrightness(uint8_t brightness) {
         brightness = MAX_BRIGHTNESS;
     }
     brightnessLevel = brightness;
-    printf("Brilho definido para %d\n", brightnessLevel);
+    printf("Brightness set to %d\n", brightnessLevel);
 }
 
 void npSetLED(const uint index, const uint8_t r, const uint8_t g, const uint8_t b) {
@@ -288,7 +289,7 @@ void drawPattern(int pattern[5][5][3]) {
 }
 
 void displayPatterns() {
-    printf("Mostrando padrões na matriz de LEDs\n");
+    printf("Displaying patterns on LED matrix\n");
     int IF[5][5][3] = {
         {{255, 0, 0}, {0, 0, 0}, {0, 255, 0}, {0, 255, 0}, {0, 255, 0}},
         {{0, 255, 0}, {0, 0, 0}, {0, 255, 0}, {0, 0, 0}, {0, 0, 0}},
@@ -319,40 +320,39 @@ void displayPatterns() {
 }
 
 void npTurnOffAll() {
-  printf("Desligando todos os LEDs\n");
-  for (uint i = 0; i < LED_COUNT; ++i) {
-      npSetLED(i, 0, 0, 0); 
-  }
-  npWrite();
+    printf("Turning off all LEDs\n");
+    for (uint i = 0; i < LED_COUNT; ++i) {
+        npSetLED(i, 0, 0, 0); 
+    }
+    npWrite();
 }
 
-// ================= Funções para Botões =================
+// ================= Buttons Functions =================
 void processButtonAction(uint button, uint buzzer_pin, uint led_pin, uint32_t *counter, const char *btnName) {
-  (*counter)++;
-  printf("Botão %s pressionado. Contagem = %u\n", btnName, *counter);
-  gpio_put(led_pin, true);
-  char msg[32];
-  snprintf(msg, sizeof(msg), "   Botao %s: %u", btnName, *counter);
-  displayMessage(msg);
-  beep(buzzer_pin, 1000);
-  gpio_put(led_pin, false);
+    (*counter)++;
+    printf("Button %s pressed. Count = %u\n", btnName, *counter);
+    gpio_put(led_pin, true);
+    char msg[32];
+    snprintf(msg, sizeof(msg), "   Button %s: %u", btnName, *counter);
+    displayMessage(msg);
+    beep(buzzer_pin, 1000);
+    gpio_put(led_pin, false);
 }
 
 void joystickButtonAction(uint button, uint buzzer_pin_1, uint buzzer_pin_2, uint led_pin, 
     uint32_t *counter_a, uint32_t *counter_b, const char *btnName) {
-printf("Joystick pressionado. Contagem A = %u, B = %u\n", *counter_a, *counter_b);
+    printf("Joystick pressed. Count A = %u, B = %u\n", *counter_a, *counter_b);
 
-gpio_put(led_pin, true);
+    gpio_put(led_pin, true);
 
-// Monta a mensagem com os contadores. Se btnName não estiver vazio, inclui-o na mensagem.
-char msg[32];
-if (btnName[0] != '\0') {
-    snprintf(msg, sizeof(msg), "%s: A %u, B %u", btnName, *counter_a, *counter_b);
-} else {
-    snprintf(msg, sizeof(msg), "A: %u, B: %u", *counter_a, *counter_b);
-}
-displayMessage(msg);
-beep(buzzer_pin_1, 1000);
-beep(buzzer_pin_2, 1000);
-gpio_put(led_pin, false);
+    char msg[32];
+    if (btnName[0] != '\0') {
+        snprintf(msg, sizeof(msg), "%s: A %u, B %u", btnName, *counter_a, *counter_b);
+    } else {
+        snprintf(msg, sizeof(msg), "   A: %u, B: %u", *counter_a, *counter_b);
+    }
+    displayMessage(msg);
+    beep(buzzer_pin_1, 1000);
+    beep(buzzer_pin_2, 1000);
+    gpio_put(led_pin, false);
 }
