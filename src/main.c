@@ -305,7 +305,7 @@ void displayPatterns() {
         {{0, 255, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 255, 0}}
     };
 
-    int Coracao[5][5][3] = {
+    int Heart[5][5][3] = {
         {{0, 0, 0}, {255, 0, 0}, {0, 0, 0}, {255, 0, 0}, {0, 0, 0}},
         {{255, 0, 0}, {0, 0, 0}, {255, 0, 0}, {0, 0, 0}, {255, 0, 0}},
         {{255, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {255, 0, 0}},
@@ -315,7 +315,7 @@ void displayPatterns() {
 
     drawPattern(IF);
     drawPattern(PI);
-    drawPattern(Coracao);
+    drawPattern(Heart);
 }
 
 void npTurnOffAll() {
