@@ -20,7 +20,7 @@
 #define BUTTON_JOYSTICK 22
 #define BUZZER_PIN   21
 #define BUZZER_PIN_2 10
-#define BUZZER_FREQUENCY 10
+#define BUZZER_FREQUENCY 10000
 
 // ================= Definições para o Display OLED =================
 const uint I2C_SDA_PIN = 14;
@@ -52,6 +52,129 @@ uint sm;
 // ================= Variáveis Globais =================
 uint32_t button_a_count = 0;
 uint32_t button_b_count = 0;
+
+// ================= Funções  =================
+void pwm_init_buzzer(uint pin);
+void beep(uint pin, uint duration_ms);
+void initDisplay(void);
+void displayMessage(const char *msg);
+void displayJoystickInfo(int pos);
+void npInit(uint pin);
+void setBrightness(uint8_t brightness);
+void npSetLED(const uint index, const uint8_t r, const uint8_t g, const uint8_t b);
+void npClear(void);
+void npWrite(void);
+int getIndex(int x, int y);
+void drawPattern(int pattern[5][5][3]);
+void displayPatterns(void);
+void npTurnOffAll(void);
+void processButtonAction(uint button, uint buzzer_pin, uint led_pin, uint32_t *counter, const char *btnName);
+void joystickButtonAction(uint button, uint buzzer_pin_1, uint buzzer_pin_2, uint led_pin, uint32_t *counter_a, uint32_t *counter_b, const char *btnName);
+
+// ================= Função Principal =================
+int main() {
+    stdio_init_all();
+    sleep_ms(5000);
+    printf("Iniciando o sistema...\n");
+  
+    // Inicializa ADC para o joystick
+    adc_init();
+    adc_gpio_init(26);
+    adc_gpio_init(27);
+  
+    // Inicializa NeoPixel
+    npInit(LED_PIN);
+    npClear();
+    setBrightness(128);
+  
+    // Inicializa os LEDs da placa
+    gpio_init(LED_BLUE);
+    gpio_set_dir(LED_BLUE, GPIO_OUT);
+    gpio_put(LED_BLUE, false);
+    gpio_init(LED_RED);
+    gpio_set_dir(LED_RED, GPIO_OUT);
+    gpio_put(LED_RED, false);
+    gpio_init(LED_GREEN);
+    gpio_set_dir(LED_GREEN, GPIO_OUT);
+    gpio_put(LED_GREEN, false);
+  
+    // Configura os GPIOs dos botões A e B
+    gpio_init(BUTTON_A);
+    gpio_set_dir(BUTTON_A, GPIO_IN);
+    gpio_pull_up(BUTTON_A);
+    gpio_init(BUTTON_B);
+    gpio_set_dir(BUTTON_B, GPIO_IN);
+    gpio_pull_up(BUTTON_B);
+    
+  
+    // Configura o GPIO do botão do joystick (GPIO22)
+    gpio_init(BUTTON_JOYSTICK);
+    gpio_set_dir(BUTTON_JOYSTICK, GPIO_IN);
+    gpio_pull_up(BUTTON_JOYSTICK);
+  
+    // Configura os GPIOs dos buzzers
+    gpio_init(BUZZER_PIN);
+    gpio_set_dir(BUZZER_PIN, GPIO_OUT);
+    gpio_init(BUZZER_PIN_2);
+    gpio_set_dir(BUZZER_PIN_2, GPIO_OUT);
+  
+    // Inicializa o PWM para ambos os buzzers
+    pwm_init_buzzer(BUZZER_PIN);
+    pwm_init_buzzer(BUZZER_PIN_2);
+  
+    // Inicializa o display OLED
+    initDisplay();
+    displayMessage("   Iniciando");
+    displayPatterns();
+    npTurnOffAll();
+  
+    // Variáveis para controle de antirrebote
+    bool prev_button_a = false;
+    bool prev_button_b = false;
+    bool prev_button_joystick = false;
+  
+    while (true) {
+      // Leitura do joystick
+      adc_select_input(0);
+      uint adc_y_raw = adc_read();
+      adc_select_input(1);
+      uint adc_x_raw = adc_read();
+      const uint adc_max = (1 << 12) - 1;
+      uint col = adc_x_raw * 5 / (adc_max + 1);
+      uint row = 4 - (adc_y_raw * 5 / (adc_max + 1));
+      npClear();
+      int pos = getIndex(col, row);
+      displayJoystickInfo(pos);
+      npSetLED(pos, 255, 0, 0);
+      npWrite();
+  
+      // Leitura dos botões
+      bool current_button_a = !gpio_get(BUTTON_A);
+      bool current_button_b = !gpio_get(BUTTON_B);
+  
+      if (current_button_a && !prev_button_a) {
+          processButtonAction(BUTTON_A, BUZZER_PIN, LED_BLUE, &button_a_count, "A");
+          sleep_ms(1000);
+      }
+      if (current_button_b && !prev_button_b) {
+          processButtonAction(BUTTON_B, BUZZER_PIN_2, LED_RED, &button_b_count, "B");
+          sleep_ms(1000);
+      }
+  
+      // Leitura do botão do joystick (GPIO22)
+      bool current_button_joystick = !gpio_get(BUTTON_JOYSTICK);
+      if (current_button_joystick && !prev_button_joystick) {
+          joystickButtonAction(BUTTON_JOYSTICK, BUZZER_PIN, BUZZER_PIN_2, LED_GREEN, &button_a_count, &button_b_count, "");
+          sleep_ms(1000);
+      }
+      
+      prev_button_a = current_button_a;
+      prev_button_b = current_button_b;
+      prev_button_joystick = current_button_joystick;
+    }
+  
+    return 0;
+  }
 
 // ================= Funções para Buzzer =================
 void pwm_init_buzzer(uint pin) {
@@ -232,110 +355,4 @@ displayMessage(msg);
 beep(buzzer_pin_1, 1000);
 beep(buzzer_pin_2, 1000);
 gpio_put(led_pin, false);
-}
-
-
-// ================= Função Principal =================
-int main() {
-  stdio_init_all();
-  sleep_ms(5000);
-  printf("Iniciando o sistema...\n");
-
-  // Inicializa ADC para o joystick
-  adc_init();
-  adc_gpio_init(26);
-  adc_gpio_init(27);
-
-  // Inicializa NeoPixel
-  npInit(LED_PIN);
-  npClear();
-  setBrightness(128);
-
-  // Inicializa os LEDs da placa
-  gpio_init(LED_BLUE);
-  gpio_set_dir(LED_BLUE, GPIO_OUT);
-  gpio_put(LED_BLUE, false);
-  gpio_init(LED_RED);
-  gpio_set_dir(LED_RED, GPIO_OUT);
-  gpio_put(LED_RED, false);
-  gpio_init(LED_GREEN);
-  gpio_set_dir(LED_GREEN, GPIO_OUT);
-  gpio_put(LED_GREEN, false);
-
-  // Configura os GPIOs dos botões A e B
-  gpio_init(BUTTON_A);
-  gpio_set_dir(BUTTON_A, GPIO_IN);
-  gpio_pull_up(BUTTON_A);
-  gpio_init(BUTTON_B);
-  gpio_set_dir(BUTTON_B, GPIO_IN);
-  gpio_pull_up(BUTTON_B);
-  
-
-  // Configura o GPIO do botão do joystick (GPIO22)
-  gpio_init(BUTTON_JOYSTICK);
-  gpio_set_dir(BUTTON_JOYSTICK, GPIO_IN);
-  gpio_pull_up(BUTTON_JOYSTICK);
-
-  // Configura os GPIOs dos buzzers
-  gpio_init(BUZZER_PIN);
-  gpio_set_dir(BUZZER_PIN, GPIO_OUT);
-  gpio_init(BUZZER_PIN_2);
-  gpio_set_dir(BUZZER_PIN_2, GPIO_OUT);
-
-  // Inicializa o PWM para ambos os buzzers
-  pwm_init_buzzer(BUZZER_PIN);
-  pwm_init_buzzer(BUZZER_PIN_2);
-
-  // Inicializa o display OLED
-  initDisplay();
-  displayMessage("   Iniciando");
-  displayPatterns();
-  npTurnOffAll();
-
-  // Variáveis para controle de antirrebote
-  bool prev_button_a = false;
-  bool prev_button_b = false;
-  bool prev_button_joystick = false;
-
-  while (true) {
-    // Leitura do joystick
-    adc_select_input(0);
-    uint adc_y_raw = adc_read();
-    adc_select_input(1);
-    uint adc_x_raw = adc_read();
-    const uint adc_max = (1 << 12) - 1;
-    uint col = adc_x_raw * 5 / (adc_max + 1);
-    uint row = 4 - (adc_y_raw * 5 / (adc_max + 1));
-    npClear();
-    int pos = getIndex(col, row);
-    displayJoystickInfo(pos);
-    npSetLED(pos, 255, 0, 0);
-    npWrite();
-
-    // Leitura dos botões
-    bool current_button_a = !gpio_get(BUTTON_A);
-    bool current_button_b = !gpio_get(BUTTON_B);
-
-    if (current_button_a && !prev_button_a) {
-        processButtonAction(BUTTON_A, BUZZER_PIN, LED_BLUE, &button_a_count, "A");
-        sleep_ms(1000);
-    }
-    if (current_button_b && !prev_button_b) {
-        processButtonAction(BUTTON_B, BUZZER_PIN_2, LED_RED, &button_b_count, "B");
-        sleep_ms(1000);
-    }
-
-    // Leitura do botão do joystick (GPIO22)
-    bool current_button_joystick = !gpio_get(BUTTON_JOYSTICK);
-    if (current_button_joystick && !prev_button_joystick) {
-        joystickButtonAction(BUTTON_JOYSTICK, BUZZER_PIN, BUZZER_PIN_2, LED_GREEN, &button_a_count, &button_b_count, "");
-        sleep_ms(1000);
-    }
-    
-    prev_button_a = current_button_a;
-    prev_button_b = current_button_b;
-    prev_button_joystick = current_button_joystick;
-  }
-
-  return 0;
 }
