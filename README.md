@@ -1,51 +1,53 @@
-# Project EmbarcaTech - Raspberry Pi Pico Interactive System
+# Project EmbarcaTech - Raspberry Pi Pico W Interactive System
+
+## Project Context
+This project represents the final assessment of the EmbarcaTech program's Unit 7. The program covered fundamental concepts of Embedded Systems, C programming for embedded systems, microcontroller architecture and programming, and Internet of Things (IoT). This interactive system demonstrates the practical application of these concepts in a functional embedded system.
+
+The project showcases:
+- Embedded Systems fundamentals through hardware integration
+- C programming implementation
+- Microcontroller programming using Raspberry Pi Pico W
+- Interactive IoT-ready system architecture
+
 
 ## Overview
 This project implements an interactive system using a Raspberry Pi Pico microcontroller, featuring LED matrix control, joystick input, button interactions, OLED display output, and buzzer feedback.
 
 ## Hardware Components
-- Raspberry Pi Pico
+- Raspberry Pi Pico W
 - 5x5 NeoPixel LED Matrix (25 LEDs)
-- SSD1306 OLED Display
+- SSD1306 OLED Display (128x64)
 - 2 Buzzers
 - 2 Push Buttons (A and B)
 - Analog Joystick with button
 - 3 Status LEDs (Red, Green, Blue)
 
 ## Pin Configuration
-### LEDs
-- Blue LED: GPIO 12
-- Red LED: GPIO 13
-- Green LED: GPIO 11
-- NeoPixel Data: GPIO 7
 
-### Buttons
-- Button A: GPIO 5
-- Button B: GPIO 6
-- Joystick Button: GPIO 22
-
-### Buzzers
-- Buzzer 1: GPIO 21
-- Buzzer 2: GPIO 10
-
-### Display
-- I2C SDA: GPIO 14
-- I2C SCL: GPIO 15
-
-### Joystick
-- X-axis: ADC1 (GPIO 27)
-- Y-axis: ADC0 (GPIO 26)
+| Components       | Raspberry Pi Pico w Pins  |
+|------------------|---------------------------|
+| LED NeoPixel     | GPIO 7                    |
+| Display OLED SDA | GPIO 14                   |
+| Display OLED SCL | GPIO 15                   |
+| Joystick (Eixo X)| GPIO 26 (ADC0)            |
+| Joystick (Eixo Y)| GPIO 27 (ADC1)            |
+| Botão A          | GPIO 5                    |
+| Botão B          | GPIO 6                    |
+| Botão Joystick   | GPIO 22                   |
+| Buzzer 1         | GPIO 21                   |
+| Buzzer 2         | GPIO 10                   |
+| LED Azul         | GPIO 12                   |
+| LED Vermelho     | GPIO 13                   |
+| LED Verde        | GPIO 11                   |
 
 ## Features
 1. Interactive LED Matrix Control
    - Joystick-controlled LED position
-   - Pattern display (IF, PI, Heart symbols)
-   - Adjustable brightness
+   - Pattern display (IF, PI, Heart)
 
 2. Button System
    - Counter tracking for buttons A and B
-   - Debounce protection
-   - LED feedback for button presses
+   - LED and Buzzers feedback for button presses
 
 3. Display Output
    - OLED status display
