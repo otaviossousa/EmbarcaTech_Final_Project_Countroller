@@ -107,7 +107,7 @@ These files are fundamental for displaying the animations and symbols shown duri
 
 Watch a 30-second demonstration of the system's key features in action.
 
-[Demo_Vídeo](https://github.com/otaviossousa/Project_EmbarcaTech/docs/video/demo_video.mp4)
+[Demo Video](https://github.com/otaviossousa/Project_EmbarcaTech/blob/main/docs/video/demo_video.mp4)
 
 ## Main Code
 ```c	
