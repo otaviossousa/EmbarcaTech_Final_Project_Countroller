@@ -103,6 +103,17 @@ The project contains special files in the `src` folder for symbol and pattern ge
 
 These files are fundamental for displaying the animations and symbols shown during system initialization.
 
+## Building Project
+After cloning the repository, you will need to create a `build` directory to compile the project. The following commands can be useful to set up and build the project:
+
+```bash
+cd EmbarcaTech_Final_Project
+mkdir build
+cd build
+cmake -G "Ninja" ..
+cmake --build .
+```
+
 ## Demo Video
 
 Watch a 30-second demonstration of the system's key features in action.
