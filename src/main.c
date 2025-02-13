@@ -18,7 +18,7 @@
 #define BUTTON_A 5
 #define BUTTON_B 6
 #define BUTTON_JOYSTICK 22
-#define BUZZER_PIN   21
+#define BUZZER_PIN_1 21
 #define BUZZER_PIN_2 10
 #define BUZZER_FREQUENCY 10000
 
@@ -85,7 +85,7 @@ int main() {
     // Initialize NeoPixel Matrix
     npInit(LED_PIN);
     npClear();
-    setBrightness(128);
+    setBrightness(200);
   
     // Initialize LEDs
     gpio_init(LED_BLUE);
@@ -112,13 +112,13 @@ int main() {
     gpio_pull_up(BUTTON_JOYSTICK);
   
     // Initialize buzzers
-    gpio_init(BUZZER_PIN);
-    gpio_set_dir(BUZZER_PIN, GPIO_OUT);
+    gpio_init(BUZZER_PIN_1);
+    gpio_set_dir(BUZZER_PIN_1, GPIO_OUT);
     gpio_init(BUZZER_PIN_2);
     gpio_set_dir(BUZZER_PIN_2, GPIO_OUT);
 
     // Initialize PWM for buzzers
-    pwm_init_buzzer(BUZZER_PIN);
+    pwm_init_buzzer(BUZZER_PIN_1);
     pwm_init_buzzer(BUZZER_PIN_2);
   
     // Initialize I2C for OLED Display
@@ -152,7 +152,7 @@ int main() {
       bool current_button_b = !gpio_get(BUTTON_B);
   
       if (current_button_a && !prev_button_a) {
-          processButtonAction(BUTTON_A, BUZZER_PIN, LED_BLUE, &button_a_count, "A");
+          processButtonAction(BUTTON_A, BUZZER_PIN_1, LED_BLUE, &button_a_count, "A");
           sleep_ms(1000);
       }
       if (current_button_b && !prev_button_b) {
@@ -163,7 +163,7 @@ int main() {
       // Joystick button reading
       bool current_button_joystick = !gpio_get(BUTTON_JOYSTICK);
       if (current_button_joystick && !prev_button_joystick) {
-          joystickButtonAction(BUTTON_JOYSTICK, BUZZER_PIN, BUZZER_PIN_2, LED_GREEN, &button_a_count, &button_b_count, "");
+          joystickButtonAction(BUTTON_JOYSTICK, BUZZER_PIN_1, BUZZER_PIN_2, LED_GREEN, &button_a_count, &button_b_count, "");
           sleep_ms(1000);
       }
       

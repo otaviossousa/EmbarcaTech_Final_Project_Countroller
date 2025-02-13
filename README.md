@@ -81,7 +81,7 @@ This project implements an interactive system using a Raspberry Pi Pico microcon
 
 ## Acknowledgments and References
 
-This project was influenced by several example projects from the [BitDogLab-C repository](https://github.com/BitDogLab/BitDogLab-C), specifically:
+This project was influenced by several example projects from the [BitDogLab-C](https://github.com/BitDogLab/BitDogLab-C), specifically:
 
 - display_oled
 - Joystick_led
@@ -89,7 +89,7 @@ This project was influenced by several example projects from the [BitDogLab-C re
 - button-buzzer
 - button_led_rgb
 
-Special thanks to Professor Jivago for his educational content and tutorials available on his YouTube channel: [@profjivago9719](https://www.youtube.com/@profjivago9719). His videos were instrumental in understanding the concepts and implementation of various components in this project.
+Special thanks to Professor Jivago for his educational content and tutorials available on his YouTube channel: [Jivago](https://www.youtube.com/@profjivago9719). His videos were instrumental in understanding the concepts and implementation of various components in this project.
 
 I would like to express my gratitude to all professors involved in the EmbarcaTech program who dedicated their time to guide us through synchronous classes, providing valuable insights and clarifications that were essential for my learning journey.
 
@@ -100,7 +100,7 @@ The project contains special files in the `src` folder for symbol and pattern ge
 
 - `drawls.c`: File generated using https://www.piskelapp.com/ containing the definitions of symbols (IF, PI, Heart) displayed on the LED matrix
 - `piskel_convert.c`: Responsible for converting and processing patterns into the appropriate LED matrix format
-
+- `main.c`: Main file containing the main loop and system initialization
 These files are fundamental for displaying the animations and symbols shown during system initialization.
 
 ## Building Project
@@ -142,7 +142,7 @@ Watch a 30-second demonstration of the system's key features in action.
 #define BUTTON_A 5
 #define BUTTON_B 6
 #define BUTTON_JOYSTICK 22
-#define BUZZER_PIN   21
+#define BUZZER_PIN_1 21
 #define BUZZER_PIN_2 10
 #define BUZZER_FREQUENCY 10000
 
@@ -209,7 +209,7 @@ int main() {
     // Initialize NeoPixel Matrix
     npInit(LED_PIN);
     npClear();
-    setBrightness(128);
+    setBrightness(200);
   
     // Initialize LEDs
     gpio_init(LED_BLUE);
@@ -236,13 +236,13 @@ int main() {
     gpio_pull_up(BUTTON_JOYSTICK);
   
     // Initialize buzzers
-    gpio_init(BUZZER_PIN);
-    gpio_set_dir(BUZZER_PIN, GPIO_OUT);
+    gpio_init(BUZZER_PIN_1);
+    gpio_set_dir(BUZZER_PIN_1, GPIO_OUT);
     gpio_init(BUZZER_PIN_2);
     gpio_set_dir(BUZZER_PIN_2, GPIO_OUT);
 
     // Initialize PWM for buzzers
-    pwm_init_buzzer(BUZZER_PIN);
+    pwm_init_buzzer(BUZZER_PIN_1);
     pwm_init_buzzer(BUZZER_PIN_2);
   
     // Initialize I2C for OLED Display
@@ -276,7 +276,7 @@ int main() {
       bool current_button_b = !gpio_get(BUTTON_B);
   
       if (current_button_a && !prev_button_a) {
-          processButtonAction(BUTTON_A, BUZZER_PIN, LED_BLUE, &button_a_count, "A");
+          processButtonAction(BUTTON_A, BUZZER_PIN_1, LED_BLUE, &button_a_count, "A");
           sleep_ms(1000);
       }
       if (current_button_b && !prev_button_b) {
@@ -287,7 +287,7 @@ int main() {
       // Joystick button reading
       bool current_button_joystick = !gpio_get(BUTTON_JOYSTICK);
       if (current_button_joystick && !prev_button_joystick) {
-          joystickButtonAction(BUTTON_JOYSTICK, BUZZER_PIN, BUZZER_PIN_2, LED_GREEN, &button_a_count, &button_b_count, "");
+          joystickButtonAction(BUTTON_JOYSTICK, BUZZER_PIN_1, BUZZER_PIN_2, LED_GREEN, &button_a_count, &button_b_count, "");
           sleep_ms(1000);
       }
       
