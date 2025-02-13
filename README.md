@@ -79,6 +79,22 @@ This project implements an interactive system using a Raspberry Pi Pico microcon
 - SSD1306 OLED Library
 - WS2812B (NeoPixel) PIO Implementation
 
+## Acknowledgments and References
+
+This project was influenced by several example projects from the [BitDogLab-C repository](https://github.com/BitDogLab/BitDogLab-C), specifically:
+
+- display_oled
+- Joystick_led
+- neopixel_pio
+- button-buzzer
+- button_led_rgb
+
+Special thanks to Professor Jivago for his educational content and tutorials available on his YouTube channel: [@profjivago9719](https://www.youtube.com/@profjivago9719). His videos were instrumental in understanding the concepts and implementation of various components in this project.
+
+I would like to express my gratitude to all professors involved in the EmbarcaTech program who dedicated their time to guide us through synchronous classes, providing valuable insights and clarifications that were essential for my learning journey.
+
+The final implementation combines and builds upon these reference projects to create an integrated interactive system.
+
 ## Code Structure
 The project contains special files in the `src` folder for symbol and pattern generation:
 
