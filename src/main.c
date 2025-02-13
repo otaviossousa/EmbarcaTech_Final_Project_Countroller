@@ -11,7 +11,7 @@
 #include "hardware/i2c.h"
 #include "hardware/adc.h"
 
-// ================= Pin Definitions =================
+// ================= Definitions for GPIO =================
 #define LED_BLUE 12
 #define LED_RED  13
 #define LED_GREEN 11
@@ -106,7 +106,6 @@ int main() {
     gpio_set_dir(BUTTON_B, GPIO_IN);
     gpio_pull_up(BUTTON_B);
     
-  
     // Initialize joystick / button
     gpio_init(BUTTON_JOYSTICK);
     gpio_set_dir(BUTTON_JOYSTICK, GPIO_IN);
@@ -178,7 +177,6 @@ int main() {
 
 // ================= Buzzer Functions =================
 void pwm_init_buzzer(uint pin) {
-    // em ingles
     printf("Initializing PWM for buzzer on pin %d\n", pin);
     gpio_set_function(pin, GPIO_FUNC_PWM);
     uint slice_num = pwm_gpio_to_slice_num(pin);
@@ -216,7 +214,7 @@ void displayMessage(const char *msg) {
     // printf("Display OLED: %s\n", msg);
 }
 
-void   displayJoystickInfo(int pos) {
+void displayJoystickInfo(int pos) {
     char msg[32];
     snprintf(msg, sizeof(msg),"led position %d",pos);
     displayMessage(msg);
@@ -342,9 +340,7 @@ void processButtonAction(uint button, uint buzzer_pin, uint led_pin, uint32_t *c
 void joystickButtonAction(uint button, uint buzzer_pin_1, uint buzzer_pin_2, uint led_pin, 
     uint32_t *counter_a, uint32_t *counter_b, const char *btnName) {
     printf("Joystick pressed. Count A = %u, B = %u\n", *counter_a, *counter_b);
-
     gpio_put(led_pin, true);
-
     char msg[32];
     if (btnName[0] != '\0') {
         snprintf(msg, sizeof(msg), "%s: A %u, B %u", btnName, *counter_a, *counter_b);
