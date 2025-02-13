@@ -103,6 +103,11 @@ The project contains special files in the `src` folder for symbol and pattern ge
 
 These files are fundamental for displaying the animations and symbols shown during system initialization.
 
+## Demo Video
+
+Watch a 30-second demonstration of the system's key features in action.
+
+<video src="https://github.com/otaviossousa/Project_EmbarcaTech/raw/main/docs/video/demo_video.mp4" controls width="100%"></video>
 ## Main Code
 ```c	
 #include <stdio.h>
