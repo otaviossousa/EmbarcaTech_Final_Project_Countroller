@@ -4,9 +4,11 @@
 #include "buzzer.h"
 #include "display.h"
 
+// Global counters for buttons
 uint32_t button_a_count = 0;
 uint32_t button_b_count = 0;
 
+// Initializes the LEDs
 void initLEDs(void) {
     gpio_init(LED_BLUE);
     gpio_set_dir(LED_BLUE, GPIO_OUT);
@@ -19,6 +21,7 @@ void initLEDs(void) {
     gpio_put(LED_GREEN, false);
 }
 
+// Initializes the buttons
 void initButtons(void) {
     gpio_init(BUTTON_A);
     gpio_set_dir(BUTTON_A, GPIO_IN);
@@ -31,6 +34,7 @@ void initButtons(void) {
     gpio_pull_up(BUTTON_JOYSTICK);
 }
 
+// Processes the button action, increments the counter, and displays the message on the OLED display
 void processButtonAction(uint32_t button, uint32_t buzzer_pin, uint32_t led_pin, uint32_t *counter, const char *btnName) {
     (*counter)++;
     printf("Button %s pressed %d times\n", btnName, *counter);
@@ -42,6 +46,7 @@ void processButtonAction(uint32_t button, uint32_t buzzer_pin, uint32_t led_pin,
     gpio_put(led_pin, false);
 }
 
+// Processes the joystick button action, increments the counters, and displays the message on the OLED display
 void joystickButtonAction(uint32_t button, uint32_t buzzer_pin_1, uint32_t buzzer_pin_2, uint32_t led_pin, uint32_t *counter_a, uint32_t *counter_b, const char *btnName) {
     printf("Joystick pressed. Count A = %u, B = %u\n", *counter_a, *counter_b);
     gpio_put(led_pin, true);
@@ -57,6 +62,7 @@ void joystickButtonAction(uint32_t button, uint32_t buzzer_pin_1, uint32_t buzze
     gpio_put(led_pin, false);
 }
 
+// Reads the state of the buttons and performs corresponding actions
 void read_buttons(void) {
     static bool prev_button_a = false;
     static bool prev_button_b = false;

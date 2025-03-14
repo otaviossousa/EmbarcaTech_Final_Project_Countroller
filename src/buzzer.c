@@ -4,6 +4,7 @@
 #include "hardware/clocks.h"
 #include "buzzer.h"
 
+// Initializes both buzzers
 void initBuzzers(void) {
     gpio_init(BUZZER_PIN_1);
     gpio_set_dir(BUZZER_PIN_1, GPIO_OUT);
@@ -13,6 +14,7 @@ void initBuzzers(void) {
     pwm_init_buzzer(BUZZER_PIN_2);
 }
 
+// Initializes the PWM for the buzzer on the specified pin
 void pwm_init_buzzer(uint32_t pin) {
     gpio_set_function(pin, GPIO_FUNC_PWM);
     uint slice_num = pwm_gpio_to_slice_num(pin);
@@ -22,6 +24,7 @@ void pwm_init_buzzer(uint32_t pin) {
     pwm_set_gpio_level(pin, 0);
 }
 
+// Generates a beep sound on the specified pin for the given duration in milliseconds
 void buzz(uint32_t pin, uint32_t duration_ms) {
     uint slice_num = pwm_gpio_to_slice_num(pin);
     pwm_set_gpio_level(pin, 2048);

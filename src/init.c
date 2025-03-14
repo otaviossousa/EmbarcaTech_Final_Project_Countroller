@@ -7,6 +7,7 @@
 #include "neopixel.h"
 #include "buttons.h"
 
+// Initializes the entire system, including display, LEDs, buttons, buzzers, and NeoPixel matrix
 void init_system(void) {
     stdio_init_all();
     sleep_ms(5000);

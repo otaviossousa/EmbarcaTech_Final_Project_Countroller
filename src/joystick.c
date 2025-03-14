@@ -4,6 +4,7 @@
 #include "neopixel.h"
 #include "display.h"
 
+// Reads the state of the joystick and updates the corresponding LED matrix
 void read_joystick(void) {
     adc_select_input(0);
     uint adc_y_raw = adc_read();
