@@ -29,12 +29,16 @@ pico_sdk_init()
 # Adiciona o executável
 add_executable(PROJECT_EMBARCATECH 
     src/main.c
-    src/drawls.c
-    lib/ssd1306/ssd1306_i2c.c
 )
 
-add_library(piskel_convert STATIC src/piskel_convert.c)
-target_link_libraries(PROJECT_EMBARCATECH piskel_convert)
+# Adiciona bibliotecas
+add_library(ssd1306 STATIC lib/ssd1306/ssd1306_i2c.c)
+target_include_directories(ssd1306 PRIVATE
+    ${CMAKE_CURRENT_LIST_DIR}/include
+    ${CMAKE_CURRENT_LIST_DIR}/include/ssd1306
+    ${PICO_SDK_PATH}/include
+)
+target_link_libraries(ssd1306 pico_stdlib hardware_i2c)
 
 # Define o nome e a versão do programa
 pico_set_program_name(PROJECT_EMBARCATECH "PROJECT_EMBARCATECH")
@@ -55,11 +59,14 @@ target_link_libraries(PROJECT_EMBARCATECH
     hardware_pwm
     hardware_clocks
     hardware_adc
+    ssd1306
 )
 
 # Inclui diretórios necessários
 target_include_directories(PROJECT_EMBARCATECH PRIVATE
-    ${CMAKE_CURRENT_LIST_DIR}/lib/ssd1306
+    ${CMAKE_CURRENT_LIST_DIR}/include
+    ${CMAKE_CURRENT_LIST_DIR}/include/ssd1306
+    ${PICO_SDK_PATH}/include
 )
 
 # Adiciona saídas extras (UF2, binário, etc.)
