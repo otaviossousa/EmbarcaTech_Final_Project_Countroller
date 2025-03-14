@@ -29,6 +29,12 @@ pico_sdk_init()
 # Adiciona o executável
 add_executable(PROJECT_EMBARCATECH 
     src/main.c
+    src/init.c
+    src/joystick.c
+    src/buttons.c
+    src/buzzer.c
+    src/neopixel.c
+    src/display.c
 )
 
 # Adiciona bibliotecas
