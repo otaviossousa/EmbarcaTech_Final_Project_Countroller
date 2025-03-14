@@ -93,7 +93,22 @@ Special thanks to Professor Jivago for his educational content and tutorials ava
 I would like to express my gratitude to all professors involved in the EmbarcaTech program who dedicated their time to guide us through synchronous classes, providing valuable insights and clarifications that were essential for my learning journey.
 
 The final implementation combines and builds upon these reference projects to create an integrated interactive system.
-### Folder Structure
+
+## Project Structure Decision
+The structure of this project was decided based on best practices for modular code and project organization in C. The following resources were instrumental in guiding the organization of this project:
+
+1. [Modular Code and How to Structure an Embedded C Project](https://www.microforum.cc/blogs/entry/46-modular-code-and-how-to-structure-an-embedded-c-project/)
+   - Emphasizes the importance of separating different functionalities into distinct modules to improve code readability and maintainability.
+
+2. [C Project Structure by Jack Wetherell](https://github.com/JackWetherell/c-project-structure)
+   - Provides a clear example of how to organize a C project with separate directories for headers, source files, and libraries.
+
+3. [How to Structure C Projects: My Experience & Best Practices by Luca Vallini](https://www.lucavall.in/blog/how-to-structure-c-projects-my-experience-best-practices)
+   - Shares practical advice on organizing C projects based on real-world experience, highlighting the benefits of a well-structured project.
+
+By following these guidelines, the project is organized in a way that makes it easy to navigate, understand, and maintain. Each module is encapsulated in its own directory, with clear separation between headers, source files, and external libraries.
+
+## Folder Structure
 The project is organized into several folders to separate different types of files and functionalities:
 
 - `include`: Header files for the project
