@@ -1,4 +1,4 @@
-# EmbarcaTech Final Project
+# EmbarcaTech Final Project Countroller
 
 ## Project Context
 This project represents the final assessment of the EmbarcaTech program's Unit 7. The program covered fundamental concepts of Embedded Systems, C programming for embedded systems, microcontroller architecture and programming, and Internet of Things (IoT). This interactive system demonstrates the practical application of these concepts in a functional embedded system.
