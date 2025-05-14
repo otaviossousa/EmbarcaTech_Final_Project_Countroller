@@ -139,7 +139,7 @@ The main source files are located in the `src` folder:
 After cloning the repository, you will need to create a `build` directory to compile the project. The following commands can be useful to set up and build the project:
 
 ```bash
-cd EmbarcaTech_Final_Project
+cd EmbarcaTech_Final_Project_Countroller
 mkdir build
 cd build
 cmake -G "Ninja" ..
